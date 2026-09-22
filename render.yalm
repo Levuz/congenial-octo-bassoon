@@ -28,8 +28,9 @@ services:
           property: connectionString
 
   # ───────────── FRONTEND (React + Vite) ─────────────
-  - type: static
+  - type: web
     name: iq-test-frontend
+    runtime: static
     rootDir: frontend
     buildCommand: "npm install && npm run build"
     staticPublishPath: ./dist
