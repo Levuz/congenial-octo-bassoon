@@ -1,0 +1,51 @@
+services:
+  # ───────────── BACKEND (Django + DRF) ─────────────
+  - type: web
+    name: iq-test-backend
+    runtime: python
+    plan: free
+    region: frankfurt
+    rootDir: backend
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
+    healthCheckPath: /api/v1/health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.5
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://iq-test-frontend.onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://iq-test-backend.onrender.com,https://iq-test-frontend.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: iq-test-db
+          property: connectionString
+
+  # ───────────── FRONTEND (React + Vite) ─────────────
+  - type: web
+    name: iq-test-frontend
+    runtime: static
+    plan: free
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: VITE_API_URL
+        value: "https://iq-test-backend.onrender.com/api/v1"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: iq-test-db
+    plan: free
+    databaseName: iqtest_db
+    user: iqtest_user
