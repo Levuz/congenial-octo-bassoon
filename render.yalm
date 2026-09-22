@@ -28,14 +28,11 @@ services:
           property: connectionString
 
   # ───────────── FRONTEND (React + Vite) ─────────────
-  - type: web
+  - type: static
     name: iq-test-frontend
-    runtime: static
-    plan: free
     rootDir: frontend
     buildCommand: "npm install && npm run build"
     staticPublishPath: ./dist
-    pullRequestPreviewsEnabled: false
     envVars:
       - key: VITE_API_URL
         value: "https://iq-test-backend.onrender.com/api/v1"
