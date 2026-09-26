@@ -1,38 +1,104 @@
 import axios from "axios";
 import i18n from "../i18n";
 
-// Reads VITE_API_URL from environment.
-// Falls back to localhost for local dev.
+// Vite env o'zgaruvchisi
 const API_BASE =
-  import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
+    import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
 
+// Axios instance
 const api = axios.create({
-  baseURL: API_BASE,
-  headers: { "Content-Type": "application/json" },
+    baseURL: API_BASE,
+    headers: {
+        "Content-Type": "application/json",
+    },
 });
 
-api.interceptors.request.use((config) => {
-  config.headers["Accept-Language"] = i18n.language || "uz";
-  const token = localStorage.getItem("access_token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
+// Request interceptor — har bir so'rovga til va token qo'shadi
+api.interceptors.request.use(function(config) {
+    config.headers["Accept-Language"] = i18n.language || "uz";
+
+    const token = localStorage.getItem("access_token");
+    if (token) {
+        config.headers.Authorization = "Bearer " + token;
+    }
+    return config;
 });
 
+// Response interceptor — 401 bo'lsa tokenni tozalaydi
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("API error:", error?.response?.data || error.message);
-    return Promise.reject(error);
-  }
+    function(response) {
+        return response;
+    },
+    function(error) {
+        if (error && error.response && error.response.status === 401) {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+        }
+        console.error(
+            "API error:",
+            (error && error.response && error.response.data) || error.message
+        );
+        return Promise.reject(error);
+    }
 );
 
-export const startTest = (language = "uz") =>
-  api.post("/test/start/", { language }).then((r) => r.data);
+// ──── API funksiyalari ────
+export const startTest = function(language) {
+    return api.post("/test/start/", { language: language || "uz" }).then(function(r) {
+        return r.data;
+    });
+};
 
-export const submitTest = (session_uuid, answers) =>
-  api.post("/test/submit/", { session_uuid, answers }).then((r) => r.data);
+export const submitTest = function(session_uuid, answers) {
+    return api
+        .post("/test/submit/", { session_uuid: session_uuid, answers: answers })
+        .then(function(r) {
+            return r.data;
+        });
+};
 
-export const getResults = (uuid) =>
-  api.get(`/test/results/${uuid}/`).then((r) => r.data);
+export const getResults = function(uuid) {
+    return api.get("/test/results/" + uuid + "/").then(function(r) {
+        return r.data;
+    });
+};
+
+export const login = function(username, password) {
+    return api
+        .post("/auth/token/", { username: username, password: password })
+        .then(function(r) {
+            return r.data;
+        });
+};
+
+export const register = function(data) {
+    return api.post("/auth/register/", data).then(function(r) {
+        return r.data;
+    });
+};
+
+export const getMe = function() {
+    return api.get("/auth/me/").then(function(r) {
+        return r.data;
+    });
+};
+
+export const updateProfile = function(data) {
+    return api.patch("/auth/profile/", data).then(function(r) {
+        return r.data;
+    });
+};
+
+export const issueCertificate = function(uuid) {
+    return api.post("/test/certificate/" + uuid + "/").then(function(r) {
+        return r.data;
+    });
+};
+
+export const verifyCertificate = function(certUuid) {
+    return api.get("/test/verify/" + certUuid + "/").then(function(r) {
+        return r.data;
+    });
+};
 
 export default api;
