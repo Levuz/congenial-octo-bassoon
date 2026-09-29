@@ -20,13 +20,11 @@ export default function Certificate() {
       return;
     }
 
-    // Profilni olish
     api
       .get("/auth/me/")
       .then((r) => setProfile(r.data.profile))
       .catch(() => {});
 
-    // Sertifikat olish
     api
       .post(`/test/certificate/${uuid}/`)
       .then((r) => setData(r.data))
@@ -34,7 +32,6 @@ export default function Certificate() {
         const detail = e?.response?.data?.detail || "Sertifikat olinmadi.";
         setError(detail);
         if (e?.response?.data?.requires_subscription) {
-          // 3 soniyadan keyin pricingga yo'naltirish
           setTimeout(() => navigate("/pricing"), 3000);
         }
       })
@@ -43,7 +40,7 @@ export default function Certificate() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-300">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-700 dark:bg-slate-950 dark:text-slate-300">
         <div className="animate-pulse">Sertifikat tayyorlanmoqda…</div>
       </div>
     );
@@ -51,12 +48,16 @@ export default function Certificate() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-950">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
         <Navbar />
         <div className="mx-auto max-w-lg px-4 py-20 text-center">
           <div className="rounded-3xl border border-rose-400/30 bg-rose-400/10 p-8">
-            <h1 className="text-xl font-bold text-rose-300">Sertifikat olinmadi</h1>
-            <p className="mt-3 text-sm text-slate-300">{error}</p>
+            <h1 className="text-xl font-bold text-rose-600 dark:text-rose-300">
+              Sertifikat olinmadi
+            </h1>
+            <p className="mt-3 text-sm text-slate-700 dark:text-slate-300">
+              {error}
+            </p>
             <button
               onClick={() => navigate("/pricing")}
               className="btn-primary mt-6"
@@ -70,27 +71,24 @@ export default function Certificate() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
       <Navbar />
 
       <main className="mx-auto max-w-4xl px-4 py-10">
-        {/* Orqaga */}
         <button
           onClick={() => navigate(-1)}
-          className="no-print mb-6 flex items-center gap-2 text-sm text-slate-400 hover:text-white"
+          className="no-print mb-6 flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
           Orqaga
         </button>
 
-        {/* Sertifikat */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
           className="rounded-3xl border-4 border-indigo-500/30 bg-white p-10 text-slate-900 shadow-2xl"
         >
-          {/* Sarlavha */}
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-500">
               <Award className="h-10 w-10 text-white" />
@@ -105,7 +103,6 @@ export default function Certificate() {
 
           <div className="my-8 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
 
-          {/* F.I.SH */}
           <div className="text-center">
             <div className="text-xs uppercase tracking-widest text-slate-500">
               Sertifikat egasi
@@ -117,7 +114,6 @@ export default function Certificate() {
 
           <div className="my-8 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
 
-          {/* Natija */}
           <div className="grid gap-8 md:grid-cols-2">
             <div className="text-center">
               <div className="text-xs uppercase tracking-widest text-slate-500">
@@ -144,7 +140,6 @@ export default function Certificate() {
 
           <div className="my-8 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
 
-          {/* Tekshirish + PDF */}
           <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
             <div className="flex items-center gap-2 text-xs text-emerald-600">
               <ShieldCheck className="h-4 w-4" />
@@ -161,8 +156,9 @@ export default function Certificate() {
             </button>
           </div>
 
-          <p className="mt-6 text-center text-xs text-slate-400">
-            Ushbu sertifikatni tekshirish: <strong>cognitest.uz/verify/{data.certificate_uuid}</strong>
+          <p className="mt-6 text-center text-xs text-slate-500">
+            Ushbu sertifikatni tekshirish:{" "}
+            <strong>cognitest.uz/verify/{data.certificate_uuid}</strong>
           </p>
         </motion.div>
       </main>

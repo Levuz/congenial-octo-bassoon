@@ -29,7 +29,6 @@ export default function Navbar() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
 
-  // Foydalanuvchi ma'lumotlarini olish
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
@@ -46,7 +45,6 @@ export default function Navbar() {
     }
   }, [location.pathname]);
 
-  // Tashqariga bosilganda user menuni yopish
   useEffect(() => {
     const handleClick = (e) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
@@ -85,9 +83,8 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/60 backdrop-blur-xl dark:bg-slate-950/60">
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/70 backdrop-blur-xl dark:border-white/5 dark:bg-slate-950/60">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        {/* ─── Logo ─── */}
         <Link to="/home" className="flex items-center gap-3">
           <img
             src="/logo.png"
@@ -97,17 +94,16 @@ export default function Navbar() {
               e.target.style.display = "none";
             }}
           />
-          <span className="text-lg font-bold tracking-tight">
+          <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
             {t("app.title")}
           </span>
         </Link>
 
-        {/* ─── Desktop menu ─── */}
         <div className="hidden items-center gap-2 md:flex">
           {/* Day/Night toggle */}
           <button
             onClick={toggle}
-            className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10 dark:text-slate-300"
+            className="rounded-xl border border-slate-200 bg-white p-2 text-slate-600 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
             title={theme === "dark" ? "Yorug‘ rejim" : "Qorong‘i rejim"}
           >
             {theme === "dark" ? (
@@ -117,30 +113,27 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* AI Yordamchi */}
           <Link
             to="/ai-advisor"
-            className="flex items-center gap-2 rounded-xl border border-violet-400/30 bg-violet-400/10 px-4 py-2 text-sm font-medium text-violet-300 transition hover:bg-violet-400/20"
+            className="flex items-center gap-2 rounded-xl border border-violet-400/30 bg-violet-400/10 px-4 py-2 text-sm font-medium text-violet-600 transition hover:bg-violet-400/20 dark:text-violet-300"
           >
             <Bot className="h-4 w-4" />
             AI Yordamchi
           </Link>
 
-          {/* Tariflar */}
           <Link
             to="/pricing"
-            className="flex items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-400/20"
+            className="flex items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-sm font-medium text-amber-600 transition hover:bg-amber-400/20 dark:text-amber-300"
           >
             <Crown className="h-4 w-4" />
             Tariflar
           </Link>
 
-          {/* User menu yoki Login/Register */}
           {user ? (
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
+                className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
               >
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-500">
                   <User className="h-3 w-3 text-white" />
@@ -155,12 +148,12 @@ export default function Navbar() {
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-slate-900/95 shadow-2xl backdrop-blur-xl">
-                  <div className="border-b border-white/5 px-4 py-3">
-                    <div className="text-sm font-semibold text-white">
+                <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-white/10 dark:bg-slate-900/95">
+                  <div className="border-b border-slate-200 px-4 py-3 dark:border-white/5">
+                    <div className="text-sm font-semibold text-slate-900 dark:text-white">
                       {user.username}
                     </div>
-                    <div className="text-xs text-slate-400">
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
                       {user.email || "Email yo‘q"}
                     </div>
                   </div>
@@ -168,7 +161,7 @@ export default function Navbar() {
                   <Link
                     to="/profile"
                     onClick={() => setUserMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/5"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/5"
                   >
                     <Settings className="h-4 w-4 text-slate-400" />
                     Profil
@@ -177,7 +170,7 @@ export default function Navbar() {
                   <Link
                     to="/payments"
                     onClick={() => setUserMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/5"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/5"
                   >
                     <CreditCard className="h-4 w-4 text-slate-400" />
                     To‘lov tarixi
@@ -186,16 +179,16 @@ export default function Navbar() {
                   <Link
                     to="/pricing"
                     onClick={() => setUserMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-amber-300 transition hover:bg-white/5"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-amber-600 transition hover:bg-slate-100 dark:text-amber-300 dark:hover:bg-white/5"
                   >
                     <Crown className="h-4 w-4" />
                     Tarifni oshirish
                   </Link>
 
-                  <div className="border-t border-white/5">
+                  <div className="border-t border-slate-200 dark:border-white/5">
                     <button
                       onClick={handleLogout}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-500/10"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-rose-600 transition hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-500/10"
                     >
                       <LogOut className="h-4 w-4" />
                       Chiqish
@@ -208,7 +201,7 @@ export default function Navbar() {
             <>
               <Link
                 to="/login"
-                className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
+                className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
               >
                 <LogIn className="h-4 w-4" />
                 Kirish
@@ -224,12 +217,10 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* ─── Mobil menyu tugmasi ─── */}
         <div className="flex items-center gap-2 md:hidden">
-          {/* Day/Night toggle (mobil) */}
           <button
             onClick={toggle}
-            className="rounded-xl border border-white/10 bg-white/5 p-2"
+            className="rounded-xl border border-slate-200 bg-white p-2 dark:border-white/10 dark:bg-white/5"
           >
             {theme === "dark" ? (
               <Sun className="h-5 w-5 text-amber-400" />
@@ -240,21 +231,20 @@ export default function Navbar() {
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="rounded-xl border border-white/10 bg-white/5 p-2"
+            className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200"
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </nav>
 
-      {/* ─── Mobil menyu ─── */}
       {menuOpen && (
-        <div className="border-t border-white/5 bg-slate-950/95 px-4 py-4 md:hidden">
+        <div className="border-t border-slate-200 bg-white/95 px-4 py-4 backdrop-blur dark:border-white/5 dark:bg-slate-950/95 md:hidden">
           <div className="flex flex-col gap-2">
             <Link
               to="/ai-advisor"
               onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 rounded-xl border border-violet-400/30 bg-violet-400/10 px-4 py-3 text-sm text-violet-300"
+              className="flex items-center gap-2 rounded-xl border border-violet-400/30 bg-violet-400/10 px-4 py-3 text-sm text-violet-600 dark:text-violet-300"
             >
               <Bot className="h-4 w-4" />
               AI Yordamchi
@@ -263,7 +253,7 @@ export default function Navbar() {
             <Link
               to="/pricing"
               onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-300"
+              className="flex items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-600 dark:text-amber-300"
             >
               <Crown className="h-4 w-4" />
               Tariflar
@@ -271,13 +261,13 @@ export default function Navbar() {
 
             {user ? (
               <>
-                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-white/5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-500">
                         <User className="h-3 w-3 text-white" />
                       </div>
-                      <span className="text-sm font-medium text-white">
+                      <span className="text-sm font-medium text-slate-900 dark:text-white">
                         {user.username}
                       </span>
                     </div>
@@ -288,7 +278,7 @@ export default function Navbar() {
                 <Link
                   to="/profile"
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200"
+                  className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200"
                 >
                   <Settings className="h-4 w-4" />
                   Profil
@@ -297,7 +287,7 @@ export default function Navbar() {
                 <Link
                   to="/payments"
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200"
+                  className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200"
                 >
                   <CreditCard className="h-4 w-4" />
                   To‘lov tarixi
@@ -305,7 +295,7 @@ export default function Navbar() {
 
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-300"
+                  className="flex items-center gap-2 rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-600 dark:text-rose-300"
                 >
                   <LogOut className="h-4 w-4" />
                   Chiqish
@@ -316,7 +306,7 @@ export default function Navbar() {
                 <Link
                   to="/login"
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200"
+                  className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200"
                 >
                   <LogIn className="h-4 w-4" />
                   Kirish

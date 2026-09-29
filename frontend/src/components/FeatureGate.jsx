@@ -26,18 +26,22 @@ export default function FeatureGate({
 
       <div className="relative flex flex-col items-center text-center">
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/20">
-          <Lock className="h-8 w-8 text-amber-400" />
+          <Lock className="h-8 w-8 text-amber-500 dark:text-amber-400" />
         </div>
 
-        <div className="mb-2 flex items-center gap-2 text-amber-300">
+        <div className="mb-2 flex items-center gap-2 text-amber-600 dark:text-amber-300">
           <Crown className="h-5 w-5" />
           <span className="text-sm font-semibold uppercase tracking-wider">
             {requiredPlan === "ultimate" ? "Ultimate" : "Pro"} tarif
           </span>
         </div>
 
-        <h3 className="text-xl font-bold text-white">{title}</h3>
-        <p className="mt-2 max-w-md text-sm text-slate-300">{description}</p>
+        <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+          {title}
+        </h3>
+        <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-slate-300">
+          {description}
+        </p>
 
         <button
           onClick={() => navigate("/pricing")}

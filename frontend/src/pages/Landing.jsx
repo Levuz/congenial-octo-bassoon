@@ -38,10 +38,12 @@ export default function Landing() {
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-2xl shadow-indigo-500/40">
             <Brain className="h-8 w-8 text-white" />
           </div>
-          <h1 className="mx-auto max-w-3xl bg-gradient-to-br from-white via-slate-100 to-indigo-300 bg-clip-text text-4xl font-black tracking-tight text-transparent md:text-6xl">
+
+          <h1 className="text-gradient mx-auto max-w-3xl text-4xl font-black tracking-tight md:text-6xl">
             {t("landing.hero_title")}
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base text-slate-400 md:text-lg">
+
+          <p className="mx-auto mt-5 max-w-2xl text-base text-slate-600 md:text-lg dark:text-slate-400">
             {t("landing.hero_subtitle")}
           </p>
 
@@ -52,7 +54,7 @@ export default function Landing() {
             </Link>
             <Link
               to="/ai-advisor"
-              className="inline-flex items-center gap-2 rounded-xl border border-violet-400/40 bg-violet-500/10 px-8 py-4 text-base font-semibold text-violet-300 transition hover:bg-violet-500/20"
+              className="inline-flex items-center gap-2 rounded-xl border border-violet-400/40 bg-violet-500/10 px-8 py-4 text-base font-semibold text-violet-600 transition hover:bg-violet-500/20 dark:text-violet-300"
             >
               <Bot className="h-5 w-5" />
               AI Yordamchi
@@ -75,10 +77,10 @@ export default function Landing() {
               <Bot className="h-10 w-10 text-white" />
             </div>
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
                 AI Yordamchi
               </h2>
-              <p className="mt-2 text-sm text-slate-300">
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
                 Imtihon (IELTS, CEFR, SAT) yoki kasb (Full Stack, Python) haqida
                 so'rang — AI sizga maslahat, kitoblar va YouTube kanallarini
                 topib beradi.
@@ -106,10 +108,10 @@ export default function Landing() {
               transition={{ delay: idx * 0.08 }}
               className="glass rounded-2xl p-5"
             >
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-300">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-600 dark:text-indigo-300">
                 <Icon className="h-5 w-5" />
               </div>
-              <div className="text-sm font-semibold text-slate-100">
+              <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                 {t(`landing.domains.${key}`)}
               </div>
             </motion.div>
@@ -120,20 +122,23 @@ export default function Landing() {
       {/* Instructions */}
       <section className="mx-auto max-w-3xl px-4 py-12">
         <div className="glass rounded-3xl p-8">
-          <h2 className="mb-4 text-2xl font-bold">
+          <h2 className="mb-4 text-2xl font-bold text-slate-900 dark:text-white">
             {t("landing.instructions_title")}
           </h2>
           <ul className="space-y-3">
             {t("landing.instructions", { returnObjects: true }).map((line, i) => (
-              <li key={i} className="flex items-start gap-3 text-slate-300">
-                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-indigo-400/40 bg-indigo-500/10 text-xs font-semibold text-indigo-300">
+              <li
+                key={i}
+                className="flex items-start gap-3 text-slate-700 dark:text-slate-300"
+              >
+                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-indigo-400/40 bg-indigo-500/10 text-xs font-semibold text-indigo-600 dark:text-indigo-300">
                   {i + 1}
                 </span>
                 <span className="text-sm leading-relaxed">{line}</span>
               </li>
             ))}
           </ul>
-          <div className="mt-6 flex items-center gap-3 rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-200">
+          <div className="mt-6 flex items-center gap-3 rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-700 dark:text-amber-200">
             <Clock className="h-5 w-5 shrink-0" />
             <span>40:00 — vaqt tugagach avtomatik yuboriladi.</span>
           </div>
@@ -151,14 +156,14 @@ export default function Landing() {
           <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-amber-500/20 blur-3xl" />
           <div className="relative">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/20">
-              <Crown className="h-8 w-8 text-amber-400" />
+              <Crown className="h-8 w-8 text-amber-500" />
             </div>
-            <h2 className="text-2xl font-bold text-white md:text-3xl">
+            <h2 className="text-2xl font-bold text-slate-900 md:text-3xl dark:text-white">
               Pro yoki Ultimate tarifga o‘ting
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-300">
-              Sertifikat olish, batafsil statistika va PDF hisobot uchun
-              Pro tarifga o‘ting.
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-600 dark:text-slate-300">
+              Sertifikat olish, batafsil statistika va PDF hisobot uchun Pro
+              tarifga o‘ting.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link
@@ -173,7 +178,7 @@ export default function Landing() {
         </motion.div>
       </section>
 
-      <footer className="border-t border-white/5 py-8 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-200 py-8 text-center text-xs text-slate-500 dark:border-white/5">
         © {new Date().getFullYear()} {t("app.title")} — {t("app.tagline")}
       </footer>
     </div>

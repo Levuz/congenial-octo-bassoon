@@ -22,7 +22,6 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // URL'dagi ?mode= o'zgarsa — formani yangilash
   useEffect(() => {
     const urlMode = searchParams.get("mode");
     if (urlMode === "register" || urlMode === "login") {
@@ -53,7 +52,7 @@ export default function Login() {
         localStorage.setItem("access_token", res.data.access);
         localStorage.setItem("refresh_token", res.data.refresh);
       }
-      navigate("/");
+      navigate("/home");
     } catch (err) {
       const data = err?.response?.data;
       let msg = "Xatolik yuz berdi.";
@@ -71,79 +70,68 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-slate-100 to-indigo-100 px-4 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl"
+        className="w-full max-w-md rounded-3xl border border-slate-200 bg-white/80 p-8 backdrop-blur-xl dark:border-white/10 dark:bg-white/5"
       >
-        {/* Sarlavha */}
         <div className="mb-6 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500">
             <Brain className="h-7 w-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             {mode === "login" ? "Tizimga kirish" : "Ro‘yxatdan o‘tish"}
           </h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
             {mode === "login"
               ? "Akkauntingizga kiring"
               : "Yangi akkaunt yarating"}
           </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={submit} className="space-y-4">
-          {/* Username */}
           <div className="relative">
-            <UserIcon className="absolute left-3 top-3.5 h-4 w-4 text-slate-500" />
+            <UserIcon className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
             <input
               type="text"
               placeholder="Foydalanuvchi nomi"
               value={form.username}
               onChange={(e) => setForm({ ...form, username: e.target.value })}
-              className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500"
               required
-              autoComplete="username"
             />
           </div>
 
-          {/* Email (faqat ro'yxatdan o'tishda) */}
           {mode === "register" && (
             <div className="relative">
-              <Mail className="absolute left-3 top-3.5 h-4 w-4 text-slate-500" />
+              <Mail className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
               <input
                 type="email"
                 placeholder="Email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
-                autoComplete="email"
+                className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500"
               />
             </div>
           )}
 
-          {/* Password */}
           <div className="relative">
-            <Lock className="absolute left-3 top-3.5 h-4 w-4 text-slate-500" />
+            <Lock className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
             <input
               type="password"
               placeholder="Parol"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500"
               required
-              autoComplete={
-                mode === "login" ? "current-password" : "new-password"
-              }
             />
           </div>
 
-          {/* Password 2 (faqat ro'yxatdan o'tishda) */}
           {mode === "register" && (
             <div className="relative">
-              <Lock className="absolute left-3 top-3.5 h-4 w-4 text-slate-500" />
+              <Lock className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
               <input
                 type="password"
                 placeholder="Parolni qayta kiriting"
@@ -151,25 +139,22 @@ export default function Login() {
                 onChange={(e) =>
                   setForm({ ...form, password2: e.target.value })
                 }
-                className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500"
                 required
-                autoComplete="new-password"
               />
             </div>
           )}
 
-          {/* Xato xabari */}
           {error && (
-            <div className="rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-2 text-sm text-rose-300">
+            <div className="rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-2 text-sm text-rose-600 dark:text-rose-300">
               {error}
             </div>
           )}
 
-          {/* Yuborish tugmasi */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 hover:brightness-110 disabled:opacity-50"
+            className="btn-primary w-full py-3"
           >
             {loading
               ? "..."
@@ -179,23 +164,21 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Rejimni almashtirish */}
         <button
           onClick={() => {
             setMode(mode === "login" ? "register" : "login");
             setError("");
           }}
-          className="mt-4 w-full text-center text-sm text-slate-400 hover:text-indigo-300"
+          className="mt-4 w-full text-center text-sm text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-300"
         >
           {mode === "login"
             ? "Akkauntingiz yo‘qmi? Ro‘yxatdan o‘tish"
             : "Akkauntingiz bormi? Kirish"}
         </button>
 
-        {/* Bosh sahifaga qaytish */}
         <Link
           to="/"
-          className="mt-4 block text-center text-xs text-slate-500 hover:text-slate-300"
+          className="mt-4 block text-center text-xs text-slate-500 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
         >
           ← Bosh sahifaga qaytish
         </Link>
