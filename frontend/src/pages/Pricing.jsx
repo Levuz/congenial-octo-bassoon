@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, Star, Zap, Crown, Lock } from "lucide-react";
@@ -85,32 +86,52 @@ const COLOR_MAP = {
 
 export default function Pricing() {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState(null);
+  const [loadingPlan, setLoadingPlan] = useState(null);
 
-  const handleSubscribe = async (planId) => {
+  // Foydalanuvchi profilini olish
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+
+    api
+      .get("/auth/me/")
+      .then((r) => setProfile(r.data.profile))
+      .catch(() => setProfile(null));
+  }, []);
+
+  const currentPlan = profile?.plan || "free";
+  const planHierarchy = { free: 0, pro: 1, ultimate: 2 };
+
+  const handleSubscribe = (planId) => {
     if (planId === "free") {
       navigate("/home");
       return;
     }
 
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      navigate("/login");
+    // Agar foydalanuvchi allaqachon shu yoki yuqori tarifga ega bo‘lsa
+    if (planHierarchy[currentPlan] >= planHierarchy[planId]) {
+      alert(`Siz allaqachon ${currentPlan.toUpperCase()} tarifga egasiz.`);
       return;
     }
 
-    try {
-      await api.post("/auth/subscribe/", { plan: planId });
-      alert(`${planId.toUpperCase()} tarif faollashtirildi!`);
-      navigate("/home");
-    } catch (err) {
-      alert("Xatolik: " + (err?.response?.data?.detail || err.message));
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      // Login qilmagan — login sahifasiga, keyin to'lovga qaytadi
+      navigate(`/login?redirect=/payment?plan=${planId}`);
+      return;
     }
+
+    // To‘lov sahifasiga yo‘naltirish
+    navigate(`/payment?plan=${planId}`);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
       <Navbar />
+
       <main className="mx-auto max-w-6xl px-4 py-16">
+        {/* Sarlavha */}
         <div className="mb-12 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -124,24 +145,59 @@ export default function Pricing() {
           </p>
         </div>
 
+        {/* Joriy tarif haqida xabar */}
+        {profile && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mx-auto mb-8 max-w-lg rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-center"
+          >
+            <div className="text-xs uppercase tracking-widest text-slate-400">
+              Joriy tarifingiz
+            </div>
+            <div className="mt-1 text-lg font-bold text-white">
+              {currentPlan.toUpperCase()}
+              {profile.plan_expires_at && (
+                <span className="ml-2 text-xs font-normal text-slate-400">
+                  ({new Date(profile.plan_expires_at).toLocaleDateString("uz-UZ")} gacha)
+                </span>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Rejalar */}
         <div className="grid gap-6 md:grid-cols-3">
           {PLANS.map((plan, idx) => {
             const Icon = plan.icon;
             const colors = COLOR_MAP[plan.color];
+            const isCurrent = currentPlan === plan.id;
+            const isDowngrade =
+              planHierarchy[currentPlan] > planHierarchy[plan.id];
+
             return (
               <motion.div
                 key={plan.id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                className={`relative rounded-3xl border ${colors.border} ${colors.bg} p-8 backdrop-blur-xl`}
+                className={`relative rounded-3xl border ${colors.border} ${colors.bg} p-8 backdrop-blur-xl ${
+                  isCurrent ? "ring-2 ring-emerald-400/60" : ""
+                }`}
               >
-                {plan.popular && (
+                {plan.popular && !isCurrent && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-1 text-xs font-bold text-white shadow-lg">
                     ENG MASHHUR
                   </div>
                 )}
 
+                {isCurrent && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-1 text-xs font-bold text-white shadow-lg">
+                    ✓ JORIY TARIF
+                  </div>
+                )}
+
+                {/* Sarlavha */}
                 <div className="mb-6 text-center">
                   <div
                     className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ${colors.badge}`}
@@ -154,6 +210,7 @@ export default function Pricing() {
                   </p>
                 </div>
 
+                {/* Narx */}
                 <div className="mb-6 text-center">
                   <div className="flex items-baseline justify-center gap-1">
                     <span className="text-4xl font-black text-white">
@@ -165,6 +222,7 @@ export default function Pricing() {
                   </div>
                 </div>
 
+                {/* Features */}
                 <ul className="mb-8 space-y-3">
                   {plan.features.map((f, i) => (
                     <li
@@ -183,28 +241,68 @@ export default function Pricing() {
                   ))}
                 </ul>
 
+                {/* Tugma */}
                 <button
                   onClick={() => handleSubscribe(plan.id)}
-                  className={`w-full rounded-xl py-3 text-sm font-semibold transition ${
+                  disabled={isCurrent || isDowngrade || loadingPlan === plan.id}
+                  className={`w-full rounded-xl py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
                     plan.popular
                       ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-500/30 hover:brightness-110"
                       : "border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10"
                   }`}
                 >
-                  {plan.id === "free" ? "Boshlash" : "Obuna bo‘lish"}
+                  {isCurrent
+                    ? "Joriy tarif"
+                    : isDowngrade
+                    ? "Allaqachon faol"
+                    : plan.id === "free"
+                    ? "Boshlash"
+                    : "Obuna bo‘lish"}
                 </button>
               </motion.div>
             );
           })}
         </div>
 
-        <div className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
-          <p className="text-sm text-slate-300">
-            <strong className="text-white">Eslatma:</strong> To‘lov tizimi
-            hozircha demo rejimida ishlaydi.
+        {/* Qabul qilinadigan kartalar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-6"
+        >
+          <div className="text-center">
+            <div className="text-xs uppercase tracking-widest text-slate-500">
+              Qabul qilinadigan to‘lov usullari
+            </div>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+              <CardBadge label="HUMO" color="from-blue-500 to-indigo-500" />
+              <CardBadge label="UZCARD" color="from-emerald-500 to-teal-500" />
+              <CardBadge label="VISA" color="from-indigo-600 to-violet-600" />
+              <CardBadge label="MASTERCARD" color="from-orange-500 to-red-500" />
+              <CardBadge label="AMEX" color="from-cyan-500 to-blue-500" />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Eslatma */}
+        <div className="mt-8 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-6 text-center">
+          <p className="text-sm text-amber-200">
+            <strong>Demo rejim:</strong> Hozircha to‘lov simulyatsiya qilinadi.
+            Haqiqiy loyihada Payme / Click / Stripe integratsiyasi qo‘shiladi.
           </p>
         </div>
       </main>
+    </div>
+  );
+}
+
+function CardBadge({ label, color }) {
+  return (
+    <div
+      className={`flex h-10 min-w-[110px] items-center justify-center rounded-lg bg-gradient-to-br ${color} px-4 text-xs font-bold text-white shadow-lg`}
+    >
+      {label}
     </div>
   );
 }

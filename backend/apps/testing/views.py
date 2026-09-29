@@ -96,45 +96,8 @@ def get_results(request, uuid):
 @permission_classes([IsAuthenticated])
 def issue_certificate(request, uuid):
     """
-    Sertifikat berish. Faqat login qilgan foydalanuvchilar uchun.
-    Profilida F.I.SH, pasport, telefon bo'lishi kerak.
-    """
-    try:
-        session = TestSession.objects.get(uuid=uuid, user=request.user)
-    except TestSession.DoesNotExist:
-        return Response({"detail": "Sessiya topilmadi."}, status=404)
-
-    if session.status != "completed":
-        return Response({"detail": "Test tugallanmagan."}, status=400)
-
-    profile = request.user.profile
-    if not profile.is_certificate_ready:
-        return Response(
-            {"detail": "Sertifikat uchun F.I.SH, pasport va telefon raqami kerak."},
-            status=400,
-        )
-
-    if not profile.certificate_uuid:
-        profile.certificate_uuid = uuid4()
-        profile.certificate_issued = True
-        profile.save()
-
-    return Response(
-        {
-            "certificate_uuid": str(profile.certificate_uuid),
-            "iq_score": session.iq_score,
-            "percentile": session.percentile,
-            "issued_at": timezone.now(),
-        }
-    )
-
-
-# ─────────────────── VERIFY CERTIFICATE ───────────────────
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def issue_certificate(request, uuid):
-    """
     Sertifikat berish. Faqat Pro/Ultimate foydalanuvchilar uchun.
+    Profilida F.I.SH, pasport, telefon bo'lishi kerak.
     """
     profile = request.user.profile
 
@@ -170,10 +133,56 @@ def issue_certificate(request, uuid):
     profile.certificate_downloads += 1
     profile.save()
 
-    return Response({
-        "certificate_uuid": str(profile.certificate_uuid),
-        "iq_score": session.iq_score,
-        "percentile": session.percentile,
-        "issued_at": timezone.now(),
-        "plan": profile.plan,
-    })
+    return Response(
+        {
+            "certificate_uuid": str(profile.certificate_uuid),
+            "iq_score": session.iq_score,
+            "percentile": session.percentile,
+            "issued_at": timezone.now(),
+            "plan": profile.plan,
+        }
+    )
+
+
+# ─────────────────── VERIFY CERTIFICATE ─────────────────── ✅ YANGI
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def verify_certificate(request, cert_uuid):
+    """
+    Sertifikat tekshiruvi. Login talab qilinmaydi.
+    Ommaviy — har kim sertifikat haqiqiyligini tekshirishi mumkin.
+    """
+    from apps.accounts.models import Profile
+
+    try:
+        profile = Profile.objects.get(certificate_uuid=cert_uuid)
+    except Profile.DoesNotExist:
+        return Response(
+            {"valid": False, "detail": "Sertifikat topilmadi."},
+            status=404,
+        )
+
+    if not profile.certificate_issued:
+        return Response(
+            {"valid": False, "detail": "Sertifikat hali berilmagan."},
+            status=404,
+        )
+
+    # Eng so'nggi tugallangan sessiya
+    latest_session = (
+        profile.user.test_sessions.filter(status="completed")
+        .order_by("-finished_at")
+        .first()
+    )
+
+    return Response(
+        {
+            "valid": True,
+            "full_name": profile.full_name,
+            "issued_at": profile.updated_at,
+            "iq_score": latest_session.iq_score if latest_session else None,
+            "percentile": latest_session.percentile if latest_session else None,
+            "plan": profile.plan,
+            "certificate_uuid": str(profile.certificate_uuid),
+        }
+    )

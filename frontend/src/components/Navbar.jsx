@@ -1,44 +1,94 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LogIn, UserPlus, User, LogOut, Menu, X } from "lucide-react";
+import {
+  LogIn,
+  UserPlus,
+  User,
+  LogOut,
+  Menu,
+  X,
+  Crown,
+  Bot,
+  CreditCard,
+  Settings,
+  ChevronDown,
+  Moon,
+  Sun,
+} from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { theme, toggle } = useTheme();
+
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
-  // Foydalanuvchi login qilganmi — tekshirish
+  // Foydalanuvchi ma'lumotlarini olish
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
-      // Token bor — foydalanuvchi ma'lumotlarini olish
       fetch(
         (import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1") +
           "/auth/me/",
-        {
-          headers: { Authorization: "Bearer " + token },
-        }
+        { headers: { Authorization: "Bearer " + token } }
       )
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => data && setUser(data))
         .catch(() => setUser(null));
+    } else {
+      setUser(null);
     }
+  }, [location.pathname]);
+
+  // Tashqariga bosilganda user menuni yopish
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     setUser(null);
-    navigate("/");
+    setUserMenuOpen(false);
+    setMenuOpen(false);
+    navigate("/login");
+  };
+
+  const planBadge = () => {
+    if (!user?.profile) return null;
+    const { plan } = user.profile;
+    if (plan === "ultimate")
+      return (
+        <span className="rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-2 py-0.5 text-[10px] font-bold text-white">
+          ULTIMATE
+        </span>
+      );
+    if (plan === "pro")
+      return (
+        <span className="rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 px-2 py-0.5 text-[10px] font-bold text-white">
+          PRO
+        </span>
+      );
+    return null;
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/60 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/60 backdrop-blur-xl dark:bg-slate-950/60">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
+        {/* ─── Logo ─── */}
+        <Link to="/home" className="flex items-center gap-3">
           <img
             src="/logo.png"
             alt="CogniTest"
@@ -52,25 +102,108 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop menu */}
+        {/* ─── Desktop menu ─── */}
         <div className="hidden items-center gap-2 md:flex">
+          {/* Day/Night toggle */}
+          <button
+            onClick={toggle}
+            className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10 dark:text-slate-300"
+            title={theme === "dark" ? "Yorug‘ rejim" : "Qorong‘i rejim"}
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4 text-amber-400" />
+            ) : (
+              <Moon className="h-4 w-4 text-indigo-500" />
+            )}
+          </button>
+
+          {/* AI Yordamchi */}
+          <Link
+            to="/ai-advisor"
+            className="flex items-center gap-2 rounded-xl border border-violet-400/30 bg-violet-400/10 px-4 py-2 text-sm font-medium text-violet-300 transition hover:bg-violet-400/20"
+          >
+            <Bot className="h-4 w-4" />
+            AI Yordamchi
+          </Link>
+
+          {/* Tariflar */}
+          <Link
+            to="/pricing"
+            className="flex items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-400/20"
+          >
+            <Crown className="h-4 w-4" />
+            Tariflar
+          </Link>
+
+          {/* User menu yoki Login/Register */}
           {user ? (
-            <>
-              <Link
-                to="/profile"
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
               >
-                <User className="h-4 w-4" />
-                {user.username}
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-2 text-sm font-medium text-rose-300 transition hover:bg-rose-400/20"
-              >
-                <LogOut className="h-4 w-4" />
-                Chiqish
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-500">
+                  <User className="h-3 w-3 text-white" />
+                </div>
+                <span>{user.username}</span>
+                {planBadge()}
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${
+                    userMenuOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
-            </>
+
+              {userMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-slate-900/95 shadow-2xl backdrop-blur-xl">
+                  <div className="border-b border-white/5 px-4 py-3">
+                    <div className="text-sm font-semibold text-white">
+                      {user.username}
+                    </div>
+                    <div className="text-xs text-slate-400">
+                      {user.email || "Email yo‘q"}
+                    </div>
+                  </div>
+
+                  <Link
+                    to="/profile"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/5"
+                  >
+                    <Settings className="h-4 w-4 text-slate-400" />
+                    Profil
+                  </Link>
+
+                  <Link
+                    to="/payments"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/5"
+                  >
+                    <CreditCard className="h-4 w-4 text-slate-400" />
+                    To‘lov tarixi
+                  </Link>
+
+                  <Link
+                    to="/pricing"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-amber-300 transition hover:bg-white/5"
+                  >
+                    <Crown className="h-4 w-4" />
+                    Tarifni oshirish
+                  </Link>
+
+                  <div className="border-t border-white/5">
+                    <button
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-rose-300 transition hover:bg-rose-500/10"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Chiqish
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <>
               <Link
@@ -91,38 +224,87 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="rounded-xl border border-white/10 bg-white/5 p-2 md:hidden"
-        >
-          {menuOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
-        </button>
+        {/* ─── Mobil menyu tugmasi ─── */}
+        <div className="flex items-center gap-2 md:hidden">
+          {/* Day/Night toggle (mobil) */}
+          <button
+            onClick={toggle}
+            className="rounded-xl border border-white/10 bg-white/5 p-2"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5 text-amber-400" />
+            ) : (
+              <Moon className="h-5 w-5 text-indigo-500" />
+            )}
+          </button>
+
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="rounded-xl border border-white/10 bg-white/5 p-2"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </nav>
 
-      {/* Mobile menu */}
+      {/* ─── Mobil menyu ─── */}
       {menuOpen && (
         <div className="border-t border-white/5 bg-slate-950/95 px-4 py-4 md:hidden">
           <div className="flex flex-col gap-2">
+            <Link
+              to="/ai-advisor"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-2 rounded-xl border border-violet-400/30 bg-violet-400/10 px-4 py-3 text-sm text-violet-300"
+            >
+              <Bot className="h-4 w-4" />
+              AI Yordamchi
+            </Link>
+
+            <Link
+              to="/pricing"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-300"
+            >
+              <Crown className="h-4 w-4" />
+              Tariflar
+            </Link>
+
             {user ? (
               <>
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-500">
+                        <User className="h-3 w-3 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-white">
+                        {user.username}
+                      </span>
+                    </div>
+                    {planBadge()}
+                  </div>
+                </div>
+
                 <Link
                   to="/profile"
                   onClick={() => setMenuOpen(false)}
                   className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200"
                 >
-                  <User className="h-4 w-4" />
-                  {user.username}
+                  <Settings className="h-4 w-4" />
+                  Profil
                 </Link>
+
+                <Link
+                  to="/payments"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200"
+                >
+                  <CreditCard className="h-4 w-4" />
+                  To‘lov tarixi
+                </Link>
+
                 <button
-                  onClick={() => {
-                    handleLogout();
-                    setMenuOpen(false);
-                  }}
+                  onClick={handleLogout}
                   className="flex items-center gap-2 rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-300"
                 >
                   <LogOut className="h-4 w-4" />
