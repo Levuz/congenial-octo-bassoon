@@ -29,6 +29,7 @@ export default function Navbar() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
 
+  /* ═══════════ Foydalanuvchi ma'lumotlarini olish ═══════════ */
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
@@ -45,6 +46,7 @@ export default function Navbar() {
     }
   }, [location.pathname]);
 
+  /* ═══════════ Tashqariga bosilganda user menuni yopish ═══════════ */
   useEffect(() => {
     const handleClick = (e) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
@@ -55,6 +57,7 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  /* ═══════════ Chiqish ═══════════ */
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
@@ -64,6 +67,7 @@ export default function Navbar() {
     navigate("/login");
   };
 
+  /* ═══════════ Tarif badge ═══════════ */
   const planBadge = () => {
     if (!user?.profile) return null;
     const { plan } = user.profile;
@@ -85,6 +89,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/70 backdrop-blur-xl dark:border-white/5 dark:bg-slate-950/60">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        {/* ═══════════ Logotip ═══════════ */}
         <Link to="/home" className="flex items-center gap-3">
           <img
             src="/logo.png"
@@ -99,6 +104,7 @@ export default function Navbar() {
           </span>
         </Link>
 
+        {/* ═══════════ Desktop menyu ═══════════ */}
         <div className="hidden items-center gap-2 md:flex">
           {/* Day/Night toggle */}
           <button
@@ -113,6 +119,7 @@ export default function Navbar() {
             )}
           </button>
 
+          {/* AI Yordamchi */}
           <Link
             to="/ai-advisor"
             className="flex items-center gap-2 rounded-xl border border-violet-400/30 bg-violet-400/10 px-4 py-2 text-sm font-medium text-violet-600 transition hover:bg-violet-400/20 dark:text-violet-300"
@@ -121,6 +128,7 @@ export default function Navbar() {
             AI Yordamchi
           </Link>
 
+          {/* Tariflar */}
           <Link
             to="/pricing"
             className="flex items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-2 text-sm font-medium text-amber-600 transition hover:bg-amber-400/20 dark:text-amber-300"
@@ -129,6 +137,7 @@ export default function Navbar() {
             Tariflar
           </Link>
 
+          {/* User menu yoki Login/Register */}
           {user ? (
             <div className="relative" ref={userMenuRef}>
               <button
@@ -147,8 +156,10 @@ export default function Navbar() {
                 />
               </button>
 
+              {/* User dropdown menyu */}
               {userMenuOpen && (
                 <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-white/10 dark:bg-slate-900/95">
+                  {/* User ma'lumotlari */}
                   <div className="border-b border-slate-200 px-4 py-3 dark:border-white/5">
                     <div className="text-sm font-semibold text-slate-900 dark:text-white">
                       {user.username}
@@ -158,6 +169,7 @@ export default function Navbar() {
                     </div>
                   </div>
 
+                  {/* Profil */}
                   <Link
                     to="/profile"
                     onClick={() => setUserMenuOpen(false)}
@@ -167,6 +179,7 @@ export default function Navbar() {
                     Profil
                   </Link>
 
+                  {/* To'lov tarixi */}
                   <Link
                     to="/payments"
                     onClick={() => setUserMenuOpen(false)}
@@ -176,6 +189,7 @@ export default function Navbar() {
                     To‘lov tarixi
                   </Link>
 
+                  {/* Tarifni oshirish */}
                   <Link
                     to="/pricing"
                     onClick={() => setUserMenuOpen(false)}
@@ -185,6 +199,7 @@ export default function Navbar() {
                     Tarifni oshirish
                   </Link>
 
+                  {/* Chiqish */}
                   <div className="border-t border-slate-200 dark:border-white/5">
                     <button
                       onClick={handleLogout}
@@ -199,6 +214,7 @@ export default function Navbar() {
             </div>
           ) : (
             <>
+              {/* Kirish */}
               <Link
                 to="/login"
                 className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
@@ -206,6 +222,8 @@ export default function Navbar() {
                 <LogIn className="h-4 w-4" />
                 Kirish
               </Link>
+
+              {/* Ro'yxatdan o'tish */}
               <Link
                 to="/login?mode=register"
                 className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:brightness-110"
@@ -217,7 +235,9 @@ export default function Navbar() {
           )}
         </div>
 
+        {/* ═══════════ Mobil tugmalar ═══════════ */}
         <div className="flex items-center gap-2 md:hidden">
+          {/* Day/Night (mobil) */}
           <button
             onClick={toggle}
             className="rounded-xl border border-slate-200 bg-white p-2 dark:border-white/10 dark:bg-white/5"
@@ -229,6 +249,7 @@ export default function Navbar() {
             )}
           </button>
 
+          {/* Hamburger tugmasi */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200"
@@ -238,9 +259,11 @@ export default function Navbar() {
         </div>
       </nav>
 
+      {/* ═══════════ Mobil menyu ═══════════ */}
       {menuOpen && (
         <div className="border-t border-slate-200 bg-white/95 px-4 py-4 backdrop-blur dark:border-white/5 dark:bg-slate-950/95 md:hidden">
           <div className="flex flex-col gap-2">
+            {/* AI Yordamchi */}
             <Link
               to="/ai-advisor"
               onClick={() => setMenuOpen(false)}
@@ -250,6 +273,7 @@ export default function Navbar() {
               AI Yordamchi
             </Link>
 
+            {/* Tariflar */}
             <Link
               to="/pricing"
               onClick={() => setMenuOpen(false)}
@@ -261,6 +285,7 @@ export default function Navbar() {
 
             {user ? (
               <>
+                {/* User info */}
                 <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-white/5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -275,6 +300,7 @@ export default function Navbar() {
                   </div>
                 </div>
 
+                {/* Profil */}
                 <Link
                   to="/profile"
                   onClick={() => setMenuOpen(false)}
@@ -284,6 +310,7 @@ export default function Navbar() {
                   Profil
                 </Link>
 
+                {/* To'lov tarixi */}
                 <Link
                   to="/payments"
                   onClick={() => setMenuOpen(false)}
@@ -293,6 +320,7 @@ export default function Navbar() {
                   To‘lov tarixi
                 </Link>
 
+                {/* Chiqish */}
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-2 rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-600 dark:text-rose-300"
@@ -303,6 +331,7 @@ export default function Navbar() {
               </>
             ) : (
               <>
+                {/* Kirish */}
                 <Link
                   to="/login"
                   onClick={() => setMenuOpen(false)}
@@ -311,6 +340,8 @@ export default function Navbar() {
                   <LogIn className="h-4 w-4" />
                   Kirish
                 </Link>
+
+                {/* Ro'yxatdan o'tish */}
                 <Link
                   to="/login?mode=register"
                   onClick={() => setMenuOpen(false)}

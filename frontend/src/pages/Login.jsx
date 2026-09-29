@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Brain, Mail, Lock, User as UserIcon } from "lucide-react";
+import { Mail, Lock, User as UserIcon } from "lucide-react";
 import api from "../api/client";
 
 export default function Login() {
@@ -77,10 +77,16 @@ export default function Login() {
         transition={{ duration: 0.4 }}
         className="w-full max-w-md rounded-3xl border border-slate-200 bg-white/80 p-8 backdrop-blur-xl dark:border-white/10 dark:bg-white/5"
       >
+        {/* Logo */}
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500">
-            <Brain className="h-7 w-7 text-white" />
-          </div>
+          <img
+            src="/logo.png"
+            alt="CogniTest"
+            className="mx-auto mb-4 h-16 w-16 object-contain drop-shadow-xl"
+            onError={(e) => {
+              e.target.style.display = "none";
+            }}
+          />
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             {mode === "login" ? "Tizimga kirish" : "Ro‘yxatdan o‘tish"}
           </h1>
@@ -91,7 +97,9 @@ export default function Login() {
           </p>
         </div>
 
+        {/* Form */}
         <form onSubmit={submit} className="space-y-4">
+          {/* Username */}
           <div className="relative">
             <UserIcon className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
             <input
@@ -101,9 +109,11 @@ export default function Login() {
               onChange={(e) => setForm({ ...form, username: e.target.value })}
               className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500"
               required
+              autoComplete="username"
             />
           </div>
 
+          {/* Email (faqat register) */}
           {mode === "register" && (
             <div className="relative">
               <Mail className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
@@ -113,10 +123,12 @@ export default function Login() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500"
+                autoComplete="email"
               />
             </div>
           )}
 
+          {/* Parol */}
           <div className="relative">
             <Lock className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
             <input
@@ -126,9 +138,13 @@ export default function Login() {
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500"
               required
+              autoComplete={
+                mode === "login" ? "current-password" : "new-password"
+              }
             />
           </div>
 
+          {/* Parol 2 (faqat register) */}
           {mode === "register" && (
             <div className="relative">
               <Lock className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
@@ -141,16 +157,19 @@ export default function Login() {
                 }
                 className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500"
                 required
+                autoComplete="new-password"
               />
             </div>
           )}
 
+          {/* Xato */}
           {error && (
             <div className="rounded-xl border border-rose-400/30 bg-rose-400/10 px-4 py-2 text-sm text-rose-600 dark:text-rose-300">
               {error}
             </div>
           )}
 
+          {/* Yuborish */}
           <button
             type="submit"
             disabled={loading}
@@ -164,6 +183,7 @@ export default function Login() {
           </button>
         </form>
 
+        {/* Rejim almashtirish */}
         <button
           onClick={() => {
             setMode(mode === "login" ? "register" : "login");
@@ -176,6 +196,7 @@ export default function Login() {
             : "Akkauntingiz bormi? Kirish"}
         </button>
 
+        {/* Bosh sahifa */}
         <Link
           to="/"
           className="mt-4 block text-center text-xs text-slate-500 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"

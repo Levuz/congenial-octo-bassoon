@@ -170,3 +170,9 @@ if not DEBUG:
 # ──────────────────────── Payment ────────────────────────
 ADMIN_PAYMENT_ACCOUNT = config("ADMIN_PAYMENT_ACCOUNT", default="")
 ADMIN_PAYMENT_HOLDER = config("ADMIN_PAYMENT_HOLDER", default="CogniTest")
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]

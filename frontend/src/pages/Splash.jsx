@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Brain } from "lucide-react";
 
 export default function Splash() {
   const navigate = useNavigate();
@@ -16,6 +15,7 @@ export default function Splash() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
+      {/* Orqa fon nuri */}
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 0.4 }}
@@ -29,13 +29,17 @@ export default function Splash() {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="relative z-10 flex flex-col items-center"
       >
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="mb-6 flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-2xl shadow-indigo-500/50"
-        >
-          <Brain className="h-12 w-12 text-white" />
-        </motion.div>
+        {/* Logotip rasmi */}
+        <motion.img
+          src="/logo.png"
+          alt="CogniTest"
+          animate={{
+            scale: [1, 1.08, 1],
+            rotate: [0, 3, -3, 0],
+          }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          className="mb-6 h-32 w-32 object-contain drop-shadow-2xl"
+        />
 
         <motion.h1
           initial={{ y: 20, opacity: 0 }}
@@ -55,6 +59,7 @@ export default function Splash() {
           Kognitiv salohiyatingizni o‘lchang
         </motion.p>
 
+        {/* Yuklash nuqtalari */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -65,7 +70,11 @@ export default function Splash() {
             <motion.div
               key={i}
               animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+              transition={{
+                duration: 0.6,
+                repeat: Infinity,
+                delay: i * 0.15,
+              }}
               className="h-2 w-2 rounded-full bg-indigo-400"
             />
           ))}

@@ -35,9 +35,14 @@ export default function Landing() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-2xl shadow-indigo-500/40">
-            <Brain className="h-8 w-8 text-white" />
-          </div>
+          <motion.img
+            src="/logo.png"
+            alt="CogniTest"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="mx-auto mb-6 h-24 w-24 object-contain drop-shadow-2xl"
+          />
 
           <h1 className="text-gradient mx-auto max-w-3xl text-4xl font-black tracking-tight md:text-6xl">
             {t("landing.hero_title")}
